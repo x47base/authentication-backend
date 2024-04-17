@@ -45,13 +45,13 @@ app.use(sessions({
 }));
 
 /* Main Endpoints */
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     return res.sendFile(path.join(`${__dirname}\\static\\index.html`));
 })
 
 /* Route File Endpoints */
-const route = require('./routes/route');
-app.use('/api', route);
+const route = require("./routes/route");
+app.use("/api", route);
 
 /* Express Endpoints Listen */
 app.listen(PORT, () => console.log(`alive on http://localhost:${PORT}`));
