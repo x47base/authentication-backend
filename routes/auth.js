@@ -40,9 +40,13 @@ const authenticateToken = (req, res, next) => {
 };
 
 /* API Endpoints */
-router.get("/register", (req, res) => {});
+router.get("/register", (req, res) => {
 
-router.post("/login", (req, res) => {});
+});
+
+router.post("/login", (req, res) => {
+    if (req.body === null) return res.status(400).send("Request body is missing.");
+});
 
 router.get("/verify", authenticateToken, (req, res) => {
     return res.sendStatus(200);

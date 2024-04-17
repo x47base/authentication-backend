@@ -6,8 +6,7 @@ router.get("/", (req, res) => res.sendStatus(200));
 
 
 /* API Endpoints */
-//const auth = require("./auth");
-const { auth } = require("./*");
+const auth = require("./auth");
 router.use("/auth", auth);
 
 
