@@ -41,11 +41,37 @@ const authenticateToken = (req, res, next) => {
 
 /* API Endpoints */
 router.get("/register", (req, res) => {
+    const { username, email, password, firstName, lastName } = req.body;
+    if (!username || !email || !password || !firstName || !lastName) {
+        return res.sendStatus(400);
+    }
 
+    /*
+        - Check if username is used already
+        - Check if email is used already
+        - Check if password meets requirements
+        - Generate userId
+        - Save to MongoDB
+        - Send Login Request
+        - Status 200
+    */
+    //
 });
 
 router.post("/login", (req, res) => {
-    if (req.body === null) return res.status(400).send("Request body is missing.");
+    const { username, email, password } = req.body;
+    if ((username || email) || !password) {
+        return res.sendStatus(400);
+    }
+    
+    /* 
+        - Hash generation and comparison of password
+            - Throw Status Error if not same password
+        - Token generation if password is same
+        - Set Token
+        - Send Status 200
+    */
+    //
 });
 
 router.get("/verify", authenticateToken, (req, res) => {
