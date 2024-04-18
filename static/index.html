@@ -103,15 +103,15 @@
             const password = document.getElementById("password").value;
 
             const options = {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'insomnia/8.6.1'
+                    "Content-Type": "application/json",
+                    "User-Agent": "insomnia/8.6.1"
                 },
                 body: `{"username":"${username}","password":"${password}"}`
               };
               
-            fetch('http://localhost:3000/api/auth/login', options)
+            fetch("http://localhost:3000/api/auth/login", options)
             .then(response => {
                 document.location = "http://localhost:3000/dashboard";
             })
