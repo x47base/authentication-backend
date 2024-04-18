@@ -22,25 +22,27 @@ const router = express.Router();
 runDBConnection();
 
 /* Variables & Constants */
-const JWT_SECRET = "iSxILagNCfvu2jGQcrt7glDSZgC9pT4KNNxevrndjoQRJRxHAZDwc6xdpSHUyfA6";
-const JWT_OPTIONS = {expiresIn: "1h"};
+const BASE_URL = `http://localhost:3000`;
 
 /* Middleware(s) */
 
 
-
-
+/* Other Functions */
 const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[0-9].*[0-9])[a-zA-Z0-9]{8}$/;
-    return passwordRegex.test(password);
+    let return_bool = false;
+    if (password.length > 8) return_bool = true;
+    const passwordRegex = /\d/;
+    if (!passwordRegex.test(password)) return_bool = false;
+    return return_bool;
 };
 
 /* API Endpoints */
 router.post("/register", async (req, res) => {
-    const { username, email, password, firstName, lastName } = req.body;
+    res.contentType("application/json");
+    let { username, email, password, firstName, lastName } = req.body;
     /* Validation for required fields */
     if (!username || !email || !password || !firstName || !lastName) {
-        return res.sendStatus(400);
+        return res.status(400).send({ success: false, message: "No body given."});
     }
 
     try {
@@ -51,7 +53,7 @@ router.post("/register", async (req, res) => {
             return res.status(400).send({ success: false, message: `The ${doesUsernameExist ? "username" : "email"} is already taken.` });
         }
     } catch (error) {
-        console.error("[ERROR] Error checking for existing username or email:", error);
+        console.error(`[ERROR] ${error}`);
         return res.status(500).send({ success: false, message: "Internal Server Error." });
     }
 
@@ -60,10 +62,17 @@ router.post("/register", async (req, res) => {
     }
     
     /* Saving the hashed password as password */
-    password = sha256(password);
+    const hashed_password = sha256(password);
     try {
         /* Create the User in MongoDB */
-        const newUser = await User.create(req.body);
+        const DATA = {
+            username: username,
+            email: email,
+            password: hashed_password,
+            firstName: firstName,
+            lastName: lastName
+        }
+        const newUser = await User.create(DATA);
         /* Generate a JWT ACCESS_TOKEN */
         const token = generateAccessToken({
             userId: newUser.userId,
@@ -71,17 +80,18 @@ router.post("/register", async (req, res) => {
             email: email,
             firstName: firstName,
             lastName: lastName
-        }, (error, jwtToken) => {
-            if (error) return res.status(500).send({ success: false, message: "Internal Server Error while generating Access Token." });
-            return jwtToken;
         });
 
         /* Save the ACCESS_TOKEN */
-        req.session.ACCESS_TOKEN = token;
-        req.session.save();
+        let tries = 0;
+        while (!req.session.ACCESS_TOKEN && tries < 3) {
+            req.session.ACCESS_TOKEN = token;
+            req.session.save();
+            tries++;
+        }
         
         /* Send Status Response "Created" with the user data */
-        return res.status(201).json({
+        return res.status(201).send({
             userId: newUser.userId,
             username: username,
             email: email,
@@ -90,22 +100,15 @@ router.post("/register", async (req, res) => {
         });
     } catch (error) {
         console.warn(`[ERROR]: ${error}`);
-        return res.status(500).json({ success: false, message: "An error occurd while registering the user." });
+        return res.status(500).send({ success: false, message: "An error occurd while registering the user." });
     }
 });
 
 router.post("/login", async (req, res) => {
+    res.contentType("application/json");
     const { username, password } = req.body;
-    if ( !username || !password ) return res.sendStatus(400);
-
+    if ( !username || !password ) return res.status(400).send({ success: false, message: "Missing parameters."});
     
-    /* 
-        - Hash generation and comparison of password
-            - Throw Status Error if not same password
-        - Token generation if password is same
-        - Set Token
-        - Send Status 200
-    */
     try {
         const user = await User.findOne({
             username: username
@@ -118,24 +121,25 @@ router.post("/login", async (req, res) => {
 
         /* Generate a JWT ACCESS_TOKEN */
         const token = generateAccessToken({
-            userId: newUser.userId,
-            username: newUser.username,
-            email: newUser.email,
-            firstName: newUser.firstName,
-            lastName: newUser.lastName
-        }, (error, jwtToken) => {
-            if (error) return res.status(500).send({ success: false, message: "Internal Server Error while generating Access Token." });
-            return jwtToken;
+            userId: user.userId,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
         });
     
-        /* Save the ACCESS_TOKEN */
-        req.session.ACCESS_TOKEN = token;
-        req.session.save();
+        /* Save the ACCESS_TOKEN (max 3 tries) */
+        let tries = 0;
+        while (!req.session.ACCESS_TOKEN && tries < 3) {
+            req.session.ACCESS_TOKEN = token;
+            req.session.save();
+            tries++;
+        }
 
-        return res.status(200).redirect(`${req.baseUrl}/dashboard`);
+        return res.status(200).redirect(`${BASE_URL}/dashboard`);
     } catch (error) {
         console.warn(`[ERROR]: ${error}`);
-        return res.status(500).json({ success: false, message: "An error occurd while logging in." });
+        return res.status(500).send({ success: false, message: "An error occurd while logging in." });
     }
 });
 
@@ -143,8 +147,8 @@ router.get("/verify", authenticateToken, (req, res) => {
     return res.sendStatus(200);
 });
 
-router.all("/logout", (req, res) => {
-    if (!req.session.token) return res.sendStatus(404);
+router.delete("/logout", (req, res) => {
+    if (!req.session.ACCESS_TOKEN) return res.sendStatus(404);
 
     req.session.destroy((error) => {
         if (error) return res.sendStatus(500);
