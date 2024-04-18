@@ -81,7 +81,7 @@ router.post("/register", async (req, res) => {
         req.session.save();
         
         /* Send Status Response "Created" with the user data */
-        res.status(201).json({
+        return res.status(201).json({
             userId: newUser.userId,
             username: username,
             email: email,
@@ -90,7 +90,7 @@ router.post("/register", async (req, res) => {
         });
     } catch (error) {
         console.warn(`[ERROR]: ${error}`);
-        res.status(500).json({ success: false, message: "An error occurd while registering the user." });
+        return res.status(500).json({ success: false, message: "An error occurd while registering the user." });
     }
 });
 
@@ -132,10 +132,10 @@ router.post("/login", async (req, res) => {
         req.session.ACCESS_TOKEN = token;
         req.session.save();
 
-        res.status(200).redirect(`${req.baseUrl}/dashboard`);
+        return res.status(200).redirect(`${req.baseUrl}/dashboard`);
     } catch (error) {
         console.warn(`[ERROR]: ${error}`);
-        res.status(500).json({ success: false, message: "An error occurd while logging in." });
+        return res.status(500).json({ success: false, message: "An error occurd while logging in." });
     }
 });
 
