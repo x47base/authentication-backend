@@ -115,7 +115,6 @@
                 const data = await response.json();
                 if (response.ok) {
                     successMessage.innerText = data.message;
-                    // Redirect or do something after successful login
                 } else {
                     errorMessage.innerText = data.message;
                 }
@@ -148,7 +147,6 @@
                 const data = await response.json();
                 if (response.ok) {
                     successMessage.innerText = data.message;
-                    // Redirect or do something after successful registration
                 } else {
                     errorMessage.innerText = data.message;
                 }

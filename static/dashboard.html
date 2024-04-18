@@ -51,9 +51,7 @@
                     });
                     if (response.ok) {
                         successMessage.innerText = "Logout successful.";
-                        // Redirect or perform actions after logout
-                        // For example, redirect to login page
-                        window.location.href = "/login";
+                        window.location.href = "/";
                     } else {
                         errorMessage.innerText = "Failed to logout.";
                     }
