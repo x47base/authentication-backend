@@ -101,25 +101,21 @@
         document.getElementById("loginSubmit").addEventListener("click", async function () {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            fetch("http://localhost:3000/api/auth/login", {
-                method: "POST",
+
+            const options = {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'insomnia/8.6.1'
                 },
-                body: JSON.stringify({
-                    "username": `${username}`,
-                    "password": `${password}`
-                })
-            }).then(res => {
-                let data = res.json();
-                if (res.ok) {
-                    successMessage.innerText = data.message;
-                } else {
-                    errorMessage.innerText = data.message;
-                }
-            }).catch(error => {
-                console.warn(error);
-            });
+                body: `{"username":"${username}","password":"${password}"}`
+              };
+              
+            fetch('http://localhost:3000/api/auth/login', options)
+            .then(response => {
+                document.location = "http://localhost:3000/dashboard";
+            })
+            .catch(err => console.error(err));
         });
     
         document.getElementById("registerSubmit").addEventListener("click", async function () {

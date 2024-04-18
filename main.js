@@ -38,11 +38,7 @@ app.use(cors({
 app.use(session({
     /* Secure secret key to sign the session ID cookie */
     secret: "2xrjrVgxkqKF62f86ZiHoZKOfOqGd0wqCPMk3qu35mojOyVLBF8uOwhHL3iokqkU",
-    cookie: {
-        credentials: "include",
-        maxAge: 1000 * 60 * 60 * 24 * 7, /* 1 week */
-        sameSite: "none"
-    },
+
     resave: true,
     saveUninitialized: true /*,
     store: new MongoDBStore({
