@@ -6,13 +6,13 @@ const JWT_SECRET = "iSxILagNCfvu2jGQcrt7glDSZgC9pT4KNNxevrndjoQRJRxHAZDwc6xdpSHU
 const JWT_OPTIONS = {expiresIn: "1h"};
 
 /* Token Generation & Authentication Functions */
-const generateAccessToken = (payload, callback) => {
-    return jwt.sign(payload, JWT_SECRET, JWT_OPTIONS, callback);
+const generateAccessToken = (payload) => {
+    return jwt.sign(payload, JWT_SECRET, JWT_OPTIONS);
 };
 
 const verifyAccessToken = (token) => {
     try {
-        const decoded = JWT.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         return { success: true, data: decoded };
     } catch (error) {
         return { success: false, error: error.message };
@@ -20,7 +20,7 @@ const verifyAccessToken = (token) => {
 };
 
 const authenticateToken = (req, res, next) => {
-    const token = req.session.token;
+    const token = req.session.ACCESS_TOKEN;
     
     if (!token) return res.sendStatus(401);
 
