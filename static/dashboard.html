@@ -9,18 +9,29 @@
     <h1>Welcome to the Dashboard</h1>
     <p>This is a secure area accessible only to logged-in users.</p>
     <button id="logoutBtn">Logout</button>
-    <script>
-        document.getElementById("logoutBtn").addEventListener("click", (event) => {
-            fetch(`${document.baseURI}/api/auth/logout`, {
-                method: "DELETE"
-            }).then(res => {
-                if (res.status === 200) {
-                    document.location = document.baseURI;
+    <script defer>
+        const BASE_URL = `http://localhost:3000`;
+        document.addEventListener("DOMContentLoaded", () => {
+            const logoutBtn = document.getElementById("logoutBtn");
+
+            logoutBtn.addEventListener("click", async () => {
+                try {
+                    const response = await fetch("/api/auth/logout", {
+                        method: "DELETE",
+                        credentials: "same-origin"
+                    });
+
+                    if (response.ok) {
+                        window.location.href = `${BASE_URL}/login`; // Redirect to login page
+                    } else {
+                        console.error("Logout failed:", response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Logout error:", error);
                 }
-            }).catch(error => {
-                console.warn(error);
-            })
-        })
+            });
+        });
+
     </script>
 </body>
 </html>
