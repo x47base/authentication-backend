@@ -4,34 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <h1>Welcome to the Dashboard</h1>
-    <p>This is a secure area accessible only to logged-in users.</p>
-    <button id="logoutBtn">Logout</button>
-    <script defer>
-        const BASE_URL = `http://localhost:3000`;
-        document.addEventListener("DOMContentLoaded", () => {
-            const logoutBtn = document.getElementById("logoutBtn");
+    <nav class="navbar">
+        <div class="container">
+            <h1><a href="#" class="brand">Dashboard</a></h1>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li><button id="logoutBtn">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
 
-            logoutBtn.addEventListener("click", async () => {
+    <section class="user-info">
+        <div class="container">
+            <h2>Welcome, <span id="userName"></span></h2>
+        </div>
+    </section>
+
+    <section class="dashboard-content">
+        <div class="container">
+            <h2>Dashboard</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+    </section>
+
+    <div id="notifications" class="notifications">
+        <p id="successMessage" class="success-message"></p>
+        <p id="errorMessage" class="error-message"></p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const logoutBtn = document.getElementById("logoutBtn");
+            const userName = document.getElementById("userName");
+            const successMessage = document.getElementById("successMessage");
+            const errorMessage = document.getElementById("errorMessage");
+
+            logoutBtn.addEventListener("click", async function () {
                 try {
                     const response = await fetch("/api/auth/logout", {
-                        method: "DELETE",
-                        credentials: "same-origin"
+                        method: "DELETE"
                     });
-
                     if (response.ok) {
-                        window.location.href = `${BASE_URL}/login`; // Redirect to login page
+                        successMessage.innerText = "Logout successful.";
+                        // Redirect or perform actions after logout
+                        // For example, redirect to login page
+                        window.location.href = "/login";
                     } else {
-                        console.error("Logout failed:", response.statusText);
+                        errorMessage.innerText = "Failed to logout.";
                     }
                 } catch (error) {
-                    console.error("Logout error:", error);
+                    console.error("Error:", error);
+                    errorMessage.innerText = "An error occurred while processing your request.";
                 }
             });
         });
-
     </script>
 </body>
 </html>

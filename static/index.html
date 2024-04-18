@@ -2,11 +2,162 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Homepage</title>
+    <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <p>Nothing here yet :O</p>    
+    <nav class="navbar">
+        <div class="container">
+            <h1><a href="#" class="brand">My Website</a></h1>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><button id="loginBtn">Login</button></li>
+                <li><button id="registerBtn">Register</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Modal Title</h2>
+            <div id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username"><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password"><br>
+                <button id="loginSubmit">Login</button>
+            </div>
+            <div id="registerForm" style="display: none;">
+                <label for="newUsername">Username:</label>
+                <input type="text" id="newUsername" name="newUsername"><br>
+                <label for="newEmail">Email:</label>
+                <input type="email" id="newEmail" name="newEmail"><br>
+                <label for="newPassword">Password:</label>
+                <input type="password" id="newPassword" name="newPassword"><br>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName"><br>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName"><br>
+                <button id="registerSubmit">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h2>Welcome to My Website</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+    </section>
+
+    <div id="notifications" class="notifications">
+        <p id="successMessage" class="success-message"></p>
+        <p id="errorMessage" class="error-message"></p>
+    </div>
+
+    <script>
+        const loginBtn = document.getElementById("loginBtn");
+        const registerBtn = document.getElementById("registerBtn");
+        const modal = document.getElementById("myModal");
+        const closeBtn = document.querySelector(".close");
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+        const modalTitle = document.getElementById("modalTitle");
+        const successMessage = document.getElementById("successMessage");
+        const errorMessage = document.getElementById("errorMessage");
+    
+        loginBtn.addEventListener("click", function () {
+            modal.style.display = "block";
+            modalTitle.innerText = "Login";
+            loginForm.style.display = "block";
+            registerForm.style.display = "none";
+            successMessage.innerText = "";
+            errorMessage.innerText = "";
+        });
+    
+        registerBtn.addEventListener("click", function () {
+            modal.style.display = "block";
+            modalTitle.innerText = "Register";
+            loginForm.style.display = "none";
+            registerForm.style.display = "block";
+            successMessage.innerText = "";
+            errorMessage.innerText = "";
+        });
+    
+        closeBtn.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+    
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    
+        document.getElementById("loginSubmit").addEventListener("click", async function () {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "username": username,
+                        "password": password
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    successMessage.innerText = data.message;
+                    // Redirect or do something after successful login
+                } else {
+                    errorMessage.innerText = data.message;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                errorMessage.innerText = "An error occurred while processing your request.";
+            }
+        });
+    
+        document.getElementById("registerSubmit").addEventListener("click", async function () {
+            const newUsername = document.getElementById("newUsername").value;
+            const newEmail = document.getElementById("newEmail").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            try {
+                const response = await fetch("/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username: newUsername,
+                        email: newEmail,
+                        password: newPassword,
+                        firstName: firstName,
+                        lastName: lastName
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    successMessage.innerText = data.message;
+                    // Redirect or do something after successful registration
+                } else {
+                    errorMessage.innerText = data.message;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                errorMessage.innerText = "An error occurred while processing your request.";
+            }
+        });
+    </script>
+    
 </body>
 </html>
