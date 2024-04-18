@@ -1,10 +1,10 @@
 const express = require("express");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 /* Middleware Imports */
-const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
-const sessions = require("express-session");
 /* API Automatic Documentation Endpoint */
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swagger.json");
@@ -30,20 +30,26 @@ const logRequest = (req, res, next) => {
 
 /* Middleware(s) */
 app.use(logRequest);
-app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
     /* Allow all site origins to request. */
     origin: "*"
 }));
-app.use(sessions({
+app.use(session({
     /* Secure secret key to sign the session ID cookie */
     secret: "2xrjrVgxkqKF62f86ZiHoZKOfOqGd0wqCPMk3qu35mojOyVLBF8uOwhHL3iokqkU",
     cookie: {
+        credentials: "include",
+        maxAge: 1000 * 60 * 60 * 24 * 7, /* 1 week */
         sameSite: "none"
     },
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true /*,
+    store: new MongoDBStore({
+        uri: "mongodb://localhost:27017/authentication-backend",
+        collection: "sessions",
+        expires: 1000 * 60 * 60 * 24 * 30
+    })*/
 }));
 
 /* Main Endpoints */
