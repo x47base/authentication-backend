@@ -52,12 +52,18 @@ app.get("/", (req, res) => {
 });
 
 app.get("/dashboard", authenticateToken, (req, res) => {
-    return res.sendFile(path.join(`${__dirname}\\static\\dashboard.html`))
+    return res.sendFile(path.join(`${__dirname}\\static\\dashboard.html`));
+});
+
+app.get("/index.css", (req, res) => {
+    return res.sendFile(path.join(`${__dirname}\\styles\\index.css`));
 });
 
 /* Route File Endpoints */
 const route = require("./routes/route");
 app.use("/api", route);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 /* Express Endpoints Listen */
 app.listen(PORT, () => console.log(`alive on http://localhost:${PORT}`));
