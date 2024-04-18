@@ -1,10 +1,9 @@
 const express = require("express");
 /* MongoDB Connection Package  */
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
 /* Define the user schema */
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
@@ -39,11 +38,11 @@ const userSchema = new Schema({
 });
 
 /* Create a virtual property for the full name */
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual("fullName").get(function() {
   return `${this.firstName} ${this.lastName}`;
 });
 
 /* Create the user model */
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
