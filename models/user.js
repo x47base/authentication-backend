@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     userId: {
         type: String,
-        required: true,
         unique: true
     },
     username: {
@@ -38,13 +37,18 @@ const userSchema = new mongoose.Schema({
 });
 
 /* Auto Assignment of userId */
-userSchema.pre("save", async (next) => {
+userSchema.pre("save", async function(next) {
     if (!this.userId) {
-        const maxUserId = await User.findOne().sort({ userUd: -1 }).select("userId");
-        this.userId = maxUserId ? maxUserId.userId + 1 : 1;
+        try {
+            const maxUserId = await User.findOne().sort({ userId: -1 }).select("userId");
+            this.userId = maxUserId ? maxUserId.userId + 1 : 1;
+        } catch (error) {
+            console.warn("[ERROR] :", error);
+            return next(error);
+        }
     }
     next();
-})
+});
 
 /* Create a virtual property for the full name */
 userSchema.virtual("fullName").get(function() {
