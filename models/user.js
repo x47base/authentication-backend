@@ -37,6 +37,15 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+/* Auto Assignment of userId */
+userSchema.pre("save", async (next) => {
+    if (!this.userId) {
+        const maxUserId = await User.findOne().sort({ userUd: -1 }).select("userId");
+        this.userId = maxUserId ? maxUserId.userId + 1 : 1;
+    }
+    next();
+})
+
 /* Create a virtual property for the full name */
 userSchema.virtual("fullName").get(function() {
   return `${this.firstName} ${this.lastName}`;
