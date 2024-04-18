@@ -10,10 +10,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swagger.json");
 /* Token Authentication Function */
 const { authenticateToken } = require("./modules/authentication");
-/* Fetch Function Import */
-const fetch = (...args) => import("node-fetch").then(({
-    default: fetch
-}) => fetch(...args));
 /* Express App */
 const app = express();
 
