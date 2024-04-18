@@ -81,6 +81,7 @@ router.post("/register", async (req, res) => {
             firstName: firstName,
             lastName: lastName
         });
+        console.log(`TOKEN_REGISTER`, token);
 
         /* Save the ACCESS_TOKEN */
         let tries = 0;
@@ -113,7 +114,7 @@ router.post("/login", async (req, res) => {
         const user = await User.findOne({
             username: username
         });
-        if (!user) return res.status(404).send({ success: false, message: "The user doesn't exist."});
+        if (!user) return res.status(404).send({ success: false, message: "The user does not exist."});
 
         let hashed_password = sha256(password);
 
@@ -127,6 +128,7 @@ router.post("/login", async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName
         });
+        console.log(`TOKEN_LOGIN`, token);
     
         /* Save the ACCESS_TOKEN (max 3 tries) */
         let tries = 0;
@@ -135,7 +137,8 @@ router.post("/login", async (req, res) => {
             req.session.save();
             tries++;
         }
-
+        console.log(`${tries} Attempts to save ACCESS_TOKEN`);
+        
         return res.status(200).redirect(`${BASE_URL}/dashboard`);
     } catch (error) {
         console.warn(`[ERROR]: ${error}`);

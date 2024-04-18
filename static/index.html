@@ -101,27 +101,24 @@
         document.getElementById("loginSubmit").addEventListener("click", async function () {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            try {
-                const response = await fetch("/api/auth/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        "username": username,
-                        "password": password
-                    })
-                });
-                const data = await response.json();
-                if (response.ok) {
+            fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            }).then(res => {
+                if (res.ok) {
                     successMessage.innerText = data.message;
                 } else {
                     errorMessage.innerText = data.message;
                 }
-            } catch (error) {
-                console.error("Error:", error);
-                errorMessage.innerText = "An error occurred while processing your request.";
-            }
+            }).catch(error => {
+                console.warn(error);
+            });
         });
     
         document.getElementById("registerSubmit").addEventListener("click", async function () {
