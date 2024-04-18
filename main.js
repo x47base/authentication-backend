@@ -8,6 +8,8 @@ const sessions = require("express-session");
 /* API Automatic Documentation Endpoint */
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./docs/swagger.json");
+/* Token Authentication Function */
+const { authenticateToken } = require("./modules/authentication");
 /* Fetch Function Import */
 const fetch = (...args) => import("node-fetch").then(({
     default: fetch
@@ -47,6 +49,10 @@ app.use(sessions({
 /* Main Endpoints */
 app.get("/", (req, res) => {
     return res.sendFile(path.join(`${__dirname}\\static\\index.html`));
+});
+
+app.get("/dashboard", authenticateToken, (req, res) => {
+    return res.sendFile(path.join(`${__dirname}\\static\\dashboard.html`))
 });
 
 /* Route File Endpoints */

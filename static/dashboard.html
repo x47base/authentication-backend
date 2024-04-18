@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Dashboard</h1>
+    <p>This is a secure area accessible only to logged-in users.</p>
+    <button id="logoutBtn">Logout</button>
+    <script>
+        document.getElementById("logoutBtn").addEventListener("click", (event) => {
+            fetch(`${document.baseURI}/api/auth/logout`, {
+                method: "DELETE"
+            }).then(res => {
+                if (res.status === 200) {
+                    document.location = document.baseURI;
+                }
+            }).catch(error => {
+                console.warn(error);
+            })
+        })
+    </script>
+</body>
+</html>
