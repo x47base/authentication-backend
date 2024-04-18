@@ -12,7 +12,7 @@ const doc = {
 /* Documentation Output File */
 const outputFile = "./swagger.json";
 /* Array of all route files */
-const routes = ["../main.js", "../routes/route.js", "../routes/auth.js"];
+const routes = ["../main.js"];
 
 /* Generation of the documentation */
 swaggerAutogen(outputFile, routes, doc);
