@@ -1,6 +1,5 @@
 const express = require("express");
 const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 /* Middleware Imports */
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
